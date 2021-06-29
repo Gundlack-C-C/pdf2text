@@ -26,6 +26,16 @@
                 "-l",
                 "./.test_out/pdf2text_test.log"
             ]
+        },
+        {
+            "name": "Server",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/app/server.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}/app",
+            "args": [
+            ]
         }
     ]
 }

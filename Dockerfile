@@ -7,3 +7,4 @@ RUN pip install -r /usr/src/app/requirements.txt
 
 COPY ./app /usr/src/app
 
+Expose 5001
