@@ -15,7 +15,7 @@ app = Flask(__name__)
 CORS(app)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-app.add_url_rule("/uploads/<name>", endpoint="download_file", build_only=True)
+app.add_url_rule("/download/<name>", endpoint="download_file", build_only=True)
 app.add_url_rule("/info/<name>", endpoint="info_file", build_only=True)
 app.add_url_rule("/upload", endpoint="upload", build_only=True)
 
