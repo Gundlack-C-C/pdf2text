@@ -53,8 +53,7 @@ def home():
 def text_extraction():
     filename = try_save_file_input(request.files)
     text = pdf2text(f"{app.config['UPLOAD_FOLDER']}{filename}")
-    return jsonify({'text': text, 'id': filename, 'url': url_for('info_file', name=filename)})
-
+    return jsonify({'text': text, 'id': filename, 'url': url_for('download_file', name=filename), 'html_body': render_template('file_upload_info.html', filename=filename, text=text)})
 
 @app.route('/upload', methods=['GET', 'POST'])
 def upload_file():
