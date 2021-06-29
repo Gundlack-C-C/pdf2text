@@ -1,10 +1,11 @@
-from flask import Flask, render_template, flash, request, redirect, url_for, send_from_directory
+from flask import json, jsonify, Flask, render_template, flash, request, redirect, url_for, send_from_directory
 from flask_cors import CORS
 
 import logging
 import argparse
 import os, sys
 from werkzeug.utils import secure_filename
+from werkzeug.exceptions import BadRequest
 from PDFReader import pdf2text
 
 UPLOAD_FOLDER = './.upload/'
@@ -22,28 +23,44 @@ def allowed_file(filename):
     return '.' in filename and \
         filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+def try_save_file_input(files):
+    if 'file' not in files:
+        flash('No file part')
+        raise BadRequest("Missing input! - not found in request.files")
+    
+    file = files['file']
+
+    if file.filename == '':
+        flash('No selected file')
+        raise BadRequest("Invalid Input - no selected file - filename is empty")
+
+    if not allowed_file(file.filename):
+        flash('Format not supported')
+        raise BadRequest(f"Invalid Input - format is not supported - supported only: {ALLOWED_EXTENSIONS}")
+
+    filename = secure_filename(file.filename)
+    file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+    return filename
+
+
 @app.route('/', methods=['GET'])
 def home():
     return redirect(url_for('upload'))
 
+
+
+@app.route('/api/text', methods=['POST'])
+def text_extraction():
+    filename = try_save_file_input(request.files)
+    text = pdf2text(f"{app.config['UPLOAD_FOLDER']}{filename}")
+    return jsonify({'text': text, 'id': filename, 'url': url_for('info_file', name=filename)})
+
+
 @app.route('/upload', methods=['GET', 'POST'])
 def upload_file():
     if request.method == 'POST':
-        # check if the post request has the file part
-        if 'file' not in request.files:
-            flash('No file part')
-            return redirect(request.url)
-        file = request.files['file']
-        # If the user does not select a file, the browser submits an
-        # empty file without a filename.
-        if file.filename == '':
-            flash('No selected file')
-            return redirect(request.url)
-
-        if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            return redirect(url_for('info_file', name=filename))
+        filename = try_save_file_input(request.files)
+        return redirect(url_for('info_file', name=filename))
     
     return render_template('file_upload.html')
 
@@ -52,7 +69,7 @@ def info_file(name):
     text = pdf2text(f"{app.config['UPLOAD_FOLDER']}{name}")
     return render_template('file_upload_info.html', filename=name, text=text)
 
-@app.route('/uploads/<name>')
+@app.route('/download/<name>')
 def download_file(name):
     return send_from_directory(app.config["UPLOAD_FOLDER"], name)
 
