@@ -1,10 +1,9 @@
 <!doctype html>
-<title>File Upload Success</title>
-<h1>Your File has been uploaded!</h1>
+<title>PDF Info</title>
+<h1>Your PDF has been uploaded!</h1>
 {% if text %}
 <h2>Text</h2>
 
 <div style="white-space: pre-wrap">{{ text }}</div>
 
-<div>Download: <a href="{{url_for('download_file', name=filename) }}">{{ filename }}</a></div>
 {% endif %}
