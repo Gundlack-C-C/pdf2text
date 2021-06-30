@@ -80,7 +80,7 @@ def info_file(filename):
 if __name__ == '__main__':
 
     try:
-        LOG = "./.log/pdf-server.log"
+        LOG = "./.log/pdf2text-server.log"
 
         # Setup Argument Parser
         parser = argparse.ArgumentParser(description='Argument Parser')
