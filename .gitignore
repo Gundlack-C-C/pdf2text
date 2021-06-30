@@ -1,3 +1,4 @@
 app/.test_out/
 *.pyc
 *.log
+app/.upload/
