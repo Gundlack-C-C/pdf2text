@@ -4,7 +4,6 @@ on:
   push:
     tags:
       - "**"
-  workflow_dispatch:
 
 jobs:
   build:
@@ -42,3 +41,9 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+      - 
+        name: Deploy Image in the Cluster
+        uses: steebchen/kubectl@v2.0.0
+        with:
+          config: ${{ secrets.KUBE_CONFIG_DATA }}
+          command: set image --record deployment/pdf-service-deployment pdf-service=${{ steps.meta.outputs.tags }}
