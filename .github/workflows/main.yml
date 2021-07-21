@@ -23,6 +23,8 @@ jobs:
         with:
           images: |
             ${{ secrets.BASE_URL_PROD }}/pdf-service
+          flavor: |
+            latest=false
           tags: |
             type=semver,pattern={{raw}}
       - 
